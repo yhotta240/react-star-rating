@@ -1,71 +1,164 @@
-# Getting Started with Create React App
+## Reactアプリケーションに星評価UIを追加する
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Reactで簡単に星評価UIを実装する方法を紹介します。この記事では、`react-icons`パッケージを使用して星のアイコンを表示し、`react-bootstrap`パッケージを使用してスタイリングを行います。
 
-## Available Scripts
+### 1. `react-icons`のインストール
 
-In the project directory, you can run:
+まず、`react-icons`パッケージをインストールします。これにより、FontAwesomeなどのアイコンセットを簡単にReactに統合することができます。
 
-### `npm start`
+```bash
+npm install react-icons
+```
+### 2. `react-bootstrap`のインストール
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+次に、react-bootstrapパッケージをインストールします。これにより、Reactアプリケーションに簡単にBootstrapのコンポーネントを追加することができます。
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+npm install react-bootstrap bootstrap@5
+```
 
-### `npm test`
+### 3. 星評価コンポーネントの実装
+以下は、星評価コンポーネントの実装例です。
+Rating.jsを作成し、以下のソースコードをコピぺします。
+```js script  
+//Rating.js
+import React from 'react';
+import { FaStar } from 'react-icons/fa';
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+/**
+ * StarRatingコンポーネントは、星の評価を表示するためのUIコンポーネントです。
+ * 
+ * @param {number} rating - 評価値（0から5の間の数値）
+ * @param {number} starsNumber - 表示する星の数（デフォルトは5）
+ * @param {number} size - 星のサイズ（デフォルトは24）
+ * @param {boolean} clickable - 評価をクリック可能にするかどうか（デフォルトはfalse）
+ * @param {function} onRate - 評価がクリックされたときのコールバック関数
+ * @param {string} sumreview - レビューの総数などの追加情報
+ * @returns {JSX.Element} StarRatingコンポーネント
+ */
+const StarRating = ({ rating = 0, starsNumber = 5, size = 24, clickable = false, onRate, sumreview }) => {
 
-### `npm run build`
+  /**
+   * 星をクリックしたときのハンドラ関数。
+   * clickableプロパティがtrueであり、onRateプロパティが設定されている場合にのみ呼び出されます。
+   * 
+   * @param {number} value - クリックされた星の値
+   */
+  const handleClick = (value) => {
+    if (clickable && onRate) {
+      onRate(value);
+    }
+  };
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  /**
+   * 星のレンダリングを行う関数。
+   * ratingプロパティの値に応じて星の色や数を調整します。
+   * 
+   * @returns {JSX.Element[]} 星のJSX要素の配列
+   */
+  const renderStars = () => {
+    const fullStars = Math.floor(rating);
+    const remainder = rating - fullStars;
+    const stars = [];
+    
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <FaStar
+          key={i}
+          color="#ffc107"
+          size={size}
+          onClick={() => clickable && handleClick(i + 1)}
+        />
+      );
+    }
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    if (remainder > 0) {
+      stars.push(
+        <div key={fullStars} className='position-relative d-flex justify-content-center'>
+          <FaStar
+            key={fullStars}
+            color='#ffc107'
+            size={size}
+            style={{
+              clipPath: `polygon(0 0, ${remainder * 100}% 0, ${remainder * 100}% 100%, 0 100%)`,
+              position: 'absolute',
+              zIndex: 1,
+            }}
+            onClick={() => clickable && handleClick(fullStars + 1)}
+          />
+          <FaStar
+            color="#e4e5e9"
+            size={size}
+          />
+        </div>
+      );
+    }
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    const remainingStars = starsNumber - fullStars - (remainder > 0 ? 1 : 0);
+    for (let i = 0; i < remainingStars; i++) {
+      stars.push(
+        <FaStar
+          key={fullStars + i + 1}
+          color="#e4e5e9"
+          size={size}
+          onClick={() => clickable && handleClick(fullStars + i + 1)}
+        />
+      );
+    }
 
-### `npm run eject`
+    return stars;
+  };
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  return (
+    <div>
+      {!clickable && <p className='m-0'>総合評価：{rating.toFixed(1)}/5</p>}
+      <div className='d-flex align-items-center'>
+        {renderStars()}
+        {clickable && <p className='m-0 ps-1'>{rating.toFixed(1)}</p>}
+        {sumreview && <p className='m-0 fs-7 ps-1'>{sumreview}</p>}
+      </div>
+    </div>
+  );
+};
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+export default StarRating;
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
+### 4. アプリケーションに星評価を追加
+任意の場所(今回はApp.js)で星評価コンポーネントを使用します。
 
-## Learn More
+```js script  
+import './App.css';
+import React, { useState } from 'react';
+import StarRating from './StarRating';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+function App() {
+  const [userRating, setUserRating] = useState(0);
+  const handleUserRatingChange = (value) => {
+    setUserRating(value);
+  };
+  return (
+    <div className="App mt-3">
+      <div className='container '>
+        <h2>ユーザによる星評価</h2>
+        <div className='d-flex justify-content-center m-4'>
+          <StarRating rating={userRating} size={24} clickable={true} onRate={handleUserRatingChange}/>
+        </div>
+      </div>
+      <div className='container '>
+        <h2>星評価の表示のみ</h2>
+        <div className='d-flex justify-content-center m-4'>
+          <StarRating rating={1.5} size={30} sumreview={1234}/>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+export default App;
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# react-star-rating
+```
+これで、Reactアプリケーションに星評価UIを簡単に追加することができます。
