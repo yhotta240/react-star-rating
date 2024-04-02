@@ -1,6 +1,6 @@
 ## Reactアプリケーションに星評価UIを実装する
 
-Reactで簡単に星評価UIを実装する方法を紹介します。この記事では、`react-icons`パッケージを使用して星のアイコンを表示し、`react-bootstrap`パッケージを使用してスタイリングを行います。
+Reactで簡単に星評価UIを実装する方法を紹介します。この記事では、`react-icons`パッケージを使用して星のアイコンを表示し、標準の`bootstrap`パッケージを使用してスタイリングを行います。
 
 #### 完成イメージ
 
@@ -20,9 +20,9 @@ Reactで簡単に星評価UIを実装する方法を紹介します。この記�
 ```bash
 npm install react-icons
 ```
-### 2. `react-bootstrap`のインストール
+### 2. `bootstrap`のインストール
 
-次に、react-bootstrapパッケージをインストールします。これにより、Reactアプリケーションに簡単にBootstrapのコンポーネントを追加することができます。
+次に、bootstrapパッケージをインストールします。これにより、Reactアプリケーションに簡単にBootstrapのコンポーネントを追加することができます。
 
 ```bash
 npm install react-bootstrap bootstrap@5
