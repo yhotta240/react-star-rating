@@ -22,7 +22,7 @@ npm install react-icons
 ```
 ### 2. `bootstrap`のインストール
 
-次に、bootstrapパッケージをインストールします。これにより、Reactアプリケーションに簡単にBootstrapのコンポーネントを追加することができます。
+次に、bootstrapパッケージをインストールします。
 
 ```bash
 npm install react-bootstrap bootstrap@5
